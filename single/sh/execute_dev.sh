@@ -2,10 +2,12 @@
 source ../../.env
 
 echo "Dockerネットワーク・コンテナを停止・削除中..."
-docker stop "$MYSQL_CONTAINER_LABEL" "$PHPMYADMIN_CONTAINER_LABEL"
-docker stop "$WEB_SERVER_CONTAINER_LABEL"
-docker rm "$MYSQL_CONTAINER_LABEL" "$PHPMYADMIN_CONTAINER_LABEL"
-docker rm "$WEB_SERVER_CONTAINER_LABEL"
+docker stop "$MYSQL_CONTAINER_LABEL" "$PHPMYADMIN_CONTAINER_LABEL" "$LOAD_BALANCER_CONTAINER_LABEL" redis
+docker stop "$WEB_SERVER_CONTAINER_LABEL" "$WEB_SERVER_CONTAINER_LABEL"1 "$WEB_SERVER_CONTAINER_LABEL"2
+docker stop "$APP_CONTAINER_LABEL"1 "$APP_CONTAINER_LABEL"2
+docker rm "$MYSQL_CONTAINER_LABEL" "$PHPMYADMIN_CONTAINER_LABEL" "$LOAD_BALANCER_CONTAINER_LABEL" redis
+docker rm "$WEB_SERVER_CONTAINER_LABEL" "$WEB_SERVER_CONTAINER_LABEL"1 "$WEB_SERVER_CONTAINER_LABEL"2
+docker rm "$APP_CONTAINER_LABEL"1 "$APP_CONTAINER_LABEL"2
 docker network rm "$NETWORK_LABEL"
 
 docker volume prune -f
@@ -35,3 +37,9 @@ docker run -d \
   -p 8082:80 \
   --platform=linux/arm64 \
   arm64v8/phpmyadmin:latest
+
+  docker run -d \
+  --name redis \
+  --network "$NETWORK_LABEL" \
+  -p 6379:6379 \
+  redis:latest
